@@ -1,0 +1,71 @@
+<script>
+	// Props
+	/** Exposes parent props to this component. */
+	export let parent;
+
+	// Stores
+	import { getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
+
+	// Form Data
+	const formData = $modalStore[0].formdata;
+	const projectsList = $modalStore[0].projects;
+
+	function onFormSubmit() {
+		if ($modalStore[0].response) $modalStore[0].response(formData);
+		modalStore.close();
+	}
+
+	// Base Classes
+	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
+	const cHeader = 'text-2xl font-bold';
+	const cForm = 'border border-surface-500 p-4 space-y-4 rounded-container-token';
+
+	$: classInputDocType = !!formData.ref_activity ? 'select' : 'select input-error';
+</script>
+
+{#if $modalStore[0]}
+	<div class="modal-example-form {cBase}">
+		<header class={cHeader}>{$modalStore[0].title ?? '(title missing)'}</header>
+		<article>{$modalStore[0].body ?? '(body missing)'}</article>
+		<form class="modal-form {cForm}">
+			<label class="label">
+				<span>Day <sup>*</sup></span>
+				<input class="input" type="date" bind:value={formData.day} placeholder="Date" />
+			</label>
+			<label>
+				<span>Project <sup>*</sup></span>
+				<select class={classInputDocType} bind:value={formData.ref_activity}>
+					<option value="">Seleziona un tipo di documento</option>
+					{#each projectsList as proj}
+						<option value={proj.id}>
+							{proj.title} ({proj.code})
+						</option>
+					{/each}
+				</select>
+			</label>
+			<label class="label">
+				<span>Worked hours <sup>*</sup></span>
+				<input
+					class="input"
+					type="number"
+					bind:value={formData.worked_hours}
+					placeholder="Insert worked hours"
+				/>
+			</label>
+			<label class="label">
+				<span>Description</span>
+				<textarea
+					class="input"
+					type="text"
+					bind:value={formData.descr}
+					placeholder="Insert description of work"
+				/>
+			</label>
+		</form>
+		<footer class="modal-footer {parent.regionFooter}">
+			<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Cancel</button>
+			<button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Save</button>
+		</footer>
+	</div>
+{/if}
