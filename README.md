@@ -6,6 +6,8 @@
 ![Skeleton](https://img.shields.io/badge/Skeleton-v2-brightgreen.svg?style=flat-square)
 
 ## Introduction
+A simple yet effective tool for organizing your working hours, built on [my FastAPI-Skeleton template](https://github.com/mistahuman/template-fastapi-motor-skeleton). Inspired by the depths of the ocean, it helps you navigate through your work with clarity and ease.
+
 
 ## Prerequisites
 Before running the project, ensure you have the following installed on your system:
