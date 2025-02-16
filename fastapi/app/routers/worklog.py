@@ -1,7 +1,7 @@
 from fastapi import Body, status, APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from app.crud.worklog import WorklogCRUD
-from app.schemas.worklog import WorklogCreate, WorklogOut, WorklogCollection, WorklogStatsCollection
+from app.schemas.worklog import WorklogCreate, WorklogOut, WorklogCollection, UpdateWorklogModel
 from app.models.worklog import WorklogModel
 from app.dependencies import get_worklog_db
 from typing import List
@@ -68,6 +68,22 @@ async def show_project(id: str, db: WorklogCRUD = Depends(get_worklog_db)):
     
     raise HTTPException(status_code=404, detail=f"Worklog {id} not found")
 
+# PATCH /worklogs/{id}
+@router.patch(
+    "/{id}",
+    response_description="Update a single worklog",
+    response_model=WorklogModel,
+    response_model_by_alias=False,
+)
+async def update_worklog(id: str, update_data: UpdateWorklogModel, db: WorklogCRUD = Depends(get_worklog_db)):
+    """
+    Update the record for a specific worklog, looked up by `id`.
+    """
+    wl = await db.update_worklog(id, update_data)
+    if wl: 
+        return wl
+    
+    raise HTTPException(status_code=404, detail=f"Worklog {id} not found")
 
 @router.delete(
     "/{id}",

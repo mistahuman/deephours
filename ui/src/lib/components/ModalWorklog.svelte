@@ -36,7 +36,7 @@
 			<label>
 				<span>Project <sup>*</sup></span>
 				<select class={classInputDocType} bind:value={formData.ref_activity}>
-					<option value="">Seleziona un tipo di documento</option>
+					<option value="">Choose a project</option>
 					{#each projectsList as proj}
 						<option value={proj.id}>
 							{proj.title} ({proj.code})

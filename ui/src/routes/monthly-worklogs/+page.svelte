@@ -70,29 +70,25 @@
 			type: 'component',
 			// Pass the component directly:
 			component: modalComponent,
-			title: 'Edit Worklog: ' + wl.day,
+			title: 'Edit Worklog: ' + formatDateLocale(wl.day),
 			body: '',
 			formdata: wl,
 			projects: projects,
-			response: (r) => apiPatchWorklog(wl.code, r)
+			response: (r) => apiPatchWorklog(wl.id, r)
 		};
 		modalStore.trigger(modal);
 	}
 
-	async function apiPatchWorklog(projId, body) {
+	async function apiPatchWorklog(wl_id, body) {
 		let message = 'Error! Worklog not updated.';
 		let type = 'variant-filled-error';
 		if (body) {
 			try {
-				const response = await patchData('worklogs/' + projId, body);
-				if (response.status) {
+				const response = await patchData('worklogs/' + wl_id, body);
+				if (response) {
 					type = 'variant-filled-success';
 					message = 'Worklog updated successfully';
-					// aggiorno la lista
-					const projectIndex = worklogs.findIndex((worklog) => worklog.code === body.code);
-					if (projectIndex !== -1) {
-						worklogs[projectIndex] = response.data;
-					}
+					fetchWorklogs(selectedMonth);
 				}
 				console.log(response);
 			} catch (error) {
@@ -251,7 +247,7 @@
 								<td>{wl.worked_hours}</td>
 								<td>{wl.descr}</td>
 								<td>
-									<!-- <button
+									<button
 									class="btn btn-sm variant-ghost-surface [&>*]:pointer-events-none"
 									on:click={() => editWorklog(wl)}
 									use:popup={{ event: 'hover', target: "edit"+wl.code, placement: 'top' }}
@@ -260,7 +256,7 @@
 								<div class="card p-2 variant-filled-secondary" data-popup={"edit"+wl.code}>
 									<p>Edit worklog</p>
 									<div class="arrow variant-filled-secondary" />
-								</div> -->
+								</div>
 									<button
 										class="btn btn-sm variant-ghost-surface [&>*]:pointer-events-none"
 										on:click={() => deleteWorklog(wl)}

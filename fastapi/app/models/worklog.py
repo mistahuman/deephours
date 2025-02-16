@@ -1,30 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from datetime import date, datetime
-from typing_extensions import Annotated
-from pydantic.functional_validators import BeforeValidator
-
-
-
-def date_to_datetime(value: str | datetime) -> datetime:
-    if isinstance(value, datetime):
-        # Se è già un datetime, restituiscilo senza modifiche
-        return value
-    elif isinstance(value, date):
-        # Se è un date, combinalo con l'ora 00:00:00
-        return datetime.combine(value, datetime.min.time())
-    elif isinstance(value, str):
-        # Se è una stringa, prova a parsarla come data ISO
-        try:
-            return datetime.fromisoformat(value)
-        except ValueError:
-            raise ValueError(f"Invalid date format: {value}. Expected ISO format (YYYY-MM-DD).")
-    else:
-        raise TypeError(f"Unsupported type for 'day': {type(value)}. Expected str, date, or datetime.")
-
-PyDate = Annotated[datetime, BeforeValidator(date_to_datetime)]
-
-PyObjectId = Annotated[str, BeforeValidator(str)]
+from app.utils.helpers import PyDate, PyObjectId
 
 class WorklogModel(BaseModel):
     """

@@ -2,9 +2,10 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from app.models.worklog import WorklogModel
 from app.models.project import ProjectModel
-from app.schemas.worklog import WorklogOut, WorklogCollection, WorklogStatsCollection, WorklogStats
+from app.schemas.worklog import WorklogOut, WorklogCollection, WorklogStatsCollection, WorklogStats, UpdateWorklogModel
 import logging
 from datetime import datetime
+from pymongo import ReturnDocument
 from app.utils.helpers import random_rgba
 
 logger = logging.getLogger("main")
@@ -109,6 +110,17 @@ class WorklogCRUD:
     async def show_worklog(self, wl_id) -> WorklogModel:
         return await self.collection.find_one({"_id": ObjectId(wl_id)})
     
+    async def update_worklog(self, wl_id: str, update_data: UpdateWorklogModel) -> WorklogModel | None:
+        new_proj = {
+            k: v for k, v in update_data.model_dump(by_alias=True).items() if v is not None
+        }
+        result = await self.collection.find_one_and_update(
+            {"_id": ObjectId(wl_id)},
+            {"$set": new_proj},
+            return_document=ReturnDocument.AFTER
+        )
+        return result
+
     async def delete_worklog(self, wl_id: str) -> bool:
         result = await self.collection.delete_one({"_id": ObjectId(wl_id)})
         return result.deleted_count > 0

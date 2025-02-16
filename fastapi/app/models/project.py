@@ -1,9 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, Field
-from typing_extensions import Annotated
-from pydantic.functional_validators import BeforeValidator
+from app.utils.helpers import PyObjectId
 
-PyObjectId = Annotated[str, BeforeValidator(str)]
 
 class ProjectModel(BaseModel):
     """

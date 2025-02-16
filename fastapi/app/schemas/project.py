@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, List
 from app.models.project import ProjectModel
-from bson import ObjectId
 
 class ProjectCollection(BaseModel):
     """
