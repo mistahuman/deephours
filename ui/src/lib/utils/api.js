@@ -1,10 +1,15 @@
 import { PUBLIC_API_URL } from '$env/static/public';
+import { browser } from '$app/environment';
 
 const baseUrl = PUBLIC_API_URL;
 
-export async function fetchData(url) {
+export async function fetchData(endpoint) {
+
+	const baseUrl = browser ? '' : 'http://backend:8000';
+	const url = browser ? endpoint : `${baseUrl}/${endpoint}`;
+
 	try {
-		const response = await fetch(baseUrl + url);
+		const response = await fetch(url);
 		if (!response.ok) {
 			throw new Error('Error during request FETCH');
 		}

@@ -4,7 +4,7 @@
 			DeepHours 0.0.1 <strong class="">Copyright &copy; 2025 MISTAHUMAN</strong>
 		</p>
 	</div>
-	<div class="image" />
+ 
 </footer>
 
 <style>
@@ -19,7 +19,4 @@
 		margin: 0;
 	}
 
-	.image {
-		margin-left: 10px;
-	}
 </style>

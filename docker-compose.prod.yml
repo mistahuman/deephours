@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./fastapi
+    # Rimuovo l'esposizione della porta all'esterno
+    # e la espongo solo internamente
+    expose:
+      - "8000"
+    networks:
+      - app_network
+
+  frontend:
+    build: ./ui
+    # Rimuovo l'esposizione della porta all'esterno
+    # e la espongo solo internamente
+    expose:
+      - "3000"
+    environment:
+      # Per chiamate server-side, usa l'hostname interno
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - app_network
+      
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"  # Usa la porta 8080 invece di 80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
