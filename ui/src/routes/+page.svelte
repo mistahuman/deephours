@@ -1,6 +1,9 @@
 <script>
 	import NavCard from '$lib/components/NavCard.svelte';
 	import { routes } from '$lib/utils/routes.js';
+	import { formatDateLocale, formatMonthLocale } from '$lib/utils/utils.js';
+
+	let now =  new Date().toISOString().slice(0, 7)
 </script>
 
 <div class="container h-full mx-auto flex justify-center items-center">
@@ -57,11 +60,16 @@
 
 		<p>Dive deep into your work statistics.</p>
 		<div class="p-4 space-y-4">
-			<div class="grid grid-cols-3 gap-4">
+			<!-- <div class="grid grid-cols-3 gap-4">
 				{#each routes as card (card.href)}
 					<NavCard title={card.title} content={card.content} href={card.href} icon={card.icon} />
 				{/each}
-			</div>
+			</div> -->
+			<a href="/worklogs/{now}" class="btn variant-filled-primary">
+				<!-- <span>(icon)</span> -->
+				<span>Deep in: {formatMonthLocale(now)}</span>
+			</a>
+			
 		</div>
 	</div>
 </div>

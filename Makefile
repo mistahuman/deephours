@@ -28,6 +28,7 @@ install:
 
 dev:
 	@cd fastapi; . venv/bin/activate; python -m app.main
+	
 ui:
 	@cd ui; npm run dev
 

@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from app.models.project import ProjectModel
 from app.models.worklog import WorklogModel
 from typing import Optional, List
-from app.utils.helpers import PyDate, PyObjectId
+from app.utils.helpers import PyDate, PyObjectId, DateString
 
 class WorklogCreate(BaseModel):
     day: str
@@ -11,6 +11,7 @@ class WorklogCreate(BaseModel):
     ref_activity: str 
 
 class WorklogOut(WorklogModel):
+    day: DateString
     project: ProjectModel
 
 

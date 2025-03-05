@@ -1,20 +1,35 @@
 <script>
 	export let data;
+
+	import { formatDateLocale, formatMonthLocale } from '$lib/utils/utils.js';
 	import IconKit from '$lib/components/IconKit.svelte';
+	import { fetchData, postData, patchData, deleteData } from '$lib/utils/api.js';
+	import { page } from '$app/stores';
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
 	import ModalDelete from '$lib/components/ModalDelete.svelte';
 	import ModalWorklog from '$lib/components/ModalWorklog.svelte';
-	import { fetchData, postData, patchData, deleteData } from '$lib/utils/api.js';
-	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { popup } from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
-	import { formatDateLocale, formatMonthLocale } from '$lib/utils/utils.js';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { invalidateAll } from '$app/navigation';
 
 	const toastStore = getToastStore();
 	const modalStore = getModalStore();
 
-	let { projects } = data;
-	let worklogs = [];
+    // Get current month from URL parameter
+    $: currentMonth = $page.params.month || new Date().toISOString().slice(0, 7);
+    $: worklogs = data.worklogs || [];
+    $: projects = data.projects || [];
+    $: console.log('Page data received:', worklogs, projects);
+
+    // search
+	let searchTerm = '';
+
+    $: filteredTableData = worklogs.filter((item) =>
+        item.day?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        item.project?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.descr?.toLowerCase().includes(searchTerm.toLowerCase())
+    ).sort((a, b) => new Date(a.date) - new Date(b.date)); 
+
 	let newWorklog = {};
 
 	// Add project
@@ -43,7 +58,7 @@
 				if (response) {
 					type = 'variant-filled-success';
 					message = 'Worklog added successfully';
-					fetchWorklogs(selectedMonth);
+					await invalidateAll();
 				}
 				console.log(response);
 			} catch (error) {
@@ -88,7 +103,7 @@
 				if (response) {
 					type = 'variant-filled-success';
 					message = 'Worklog updated successfully';
-					fetchWorklogs(selectedMonth);
+					await invalidateAll();
 				}
 				console.log(response);
 			} catch (error) {
@@ -114,7 +129,7 @@
 		const modal = {
 			component: modalComponent,
 			type: 'component',
-			title: `Deleting worklog: ${wl.day}`,
+			title: `Deleting worklog: ${formatDateLocale(wl.day)}`,
 			body: 'Are you sure?',
 			response: (r) => apiDeleteWorklog(wl.id, wl, r)
 		};
@@ -152,64 +167,12 @@
 		};
 		toastStore.trigger(toast);
 	}
-
-	// search
-	let searchTerm = '';
-
-	$: filteredTableData = worklogs.filter((item) =>
-		item.day.toLowerCase().includes(searchTerm.toLowerCase())
-	);
-
-	let selectedMonth = new Date().toISOString().slice(0, 7);
-
-	async function fetchWorklogs() {
-		try {
-			// const response = await fetchData(`worklogs?month=${selectedMonth}`);
-			const response = await fetchData(`worklogs/${selectedMonth}`);
-			console.log(response);
-			if (response?.worklogs) {
-				worklogs = response.worklogs;
-			} else {
-				worklogs = [];
-			}
-		} catch (error) {
-			console.error('Failed to fetch worklogs:', error);
-		} finally {
-		}
-	}
-
-	onMount(() => {
-		fetchWorklogs(selectedMonth);
-	});
-
-	function handleMonthChange(event) {
-		selectedMonth = event.target.value;
-		fetchWorklogs(selectedMonth); // Richiama la fetch con il nuovo mese
-	}
-	// $: selectedMonth, fetchWorklogs();
 </script>
 
-<h3 class="h3">Monthly worklogs</h3>
-<hr />
-
-<div class="card w-full text-token">
-	<header class="card-header h5">Select month date:</header>
-	<section class="p-4 space-y-4">
-		<div class="grid grid-cols-3 gap-8">
-			<input
-				class="input"
-				title=""
-				type="month"
-				bind:value={selectedMonth}
-				on:change={handleMonthChange}
-			/>
-		</div>
-	</section>
-</div>
 <div class="card w-full text-token">
 	<header class="card-header">
 		<div class="space-y-4">
-			<h2 class="h2">{formatMonthLocale(selectedMonth)}</h2>
+			<h2 class="h2">{formatMonthLocale(currentMonth)}</h2>
 			<div class="grid grid-cols-2 gap-4">
 				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 					<div class="input-group-shim">
@@ -274,6 +237,10 @@
 					<tfoot />
 				</table>
 			</div>
+		</section>
+	{:else}
+		<section class="p-4">
+			<p>No worklogs found for this month.</p>
 		</section>
 	{/if}
 	<footer class="card-footer flex justify-center items-center">

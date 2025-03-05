@@ -1,10 +1,10 @@
 export let routes = [
 	{
-		name: 'monthly-worklogs',
-		title: 'Monthly Worklogs',
+		name: 'worklogs',
+		title: 'Worked Hours',
 		content:
 			'Monitor your monthly worklogs, with a suite of tools that will make your work easier.',
-		href: '/monthly-worklogs',
+		href: '/worklogs',
 		icon: 'mdi:calendar-month-outline'
 	},
 	{
