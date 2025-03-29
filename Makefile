@@ -32,8 +32,8 @@ dev:
 ui:
 	@cd ui; npm run dev
 
-prod:
-	@docker-compose -f docker-compose.prod.yml up -d --build
+# prod:
+# 	@docker-compose -f docker-compose.prod.yml up -d --build
 
 run:
 	@docker-compose -p $(PROJECT_NAME) up -d --build
