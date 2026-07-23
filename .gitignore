@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+
+# Environments
+.env
+.env.*
+!.env.example
+.venv
+venv/
+
+# Node / SvelteKit
+node_modules
+/ui/.svelte-kit
+/ui/build
+/ui/.output
+
+# Editors
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
